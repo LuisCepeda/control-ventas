@@ -1,59 +1,31 @@
-"use client";
 import { fetchRevenue } from "@/lib/data";
+import { formatDateToLocal } from "@/lib/utils";
 import { Bar, BarChart } from "@tremor/react";
 import { lusitana } from "@/ui/fonts";
-import React, { useState } from "react";
 export default async function RevenueChart() {
   const revenue = await fetchRevenue();
-  const chartdata = [
-    {
-      name: "Amphibians",
-      "Number of threatened species": 2488,
-    },
-    {
-      name: "Birds",
-      "Number of threatened species": 1445,
-    },
-    {
-      name: "Crustaceans",
-      "Number of threatened species": 743,
-    },
-    {
-      name: "Ferns",
-      "Number of threatened species": 281,
-    },
-    {
-      name: "Arachnids",
-      "Number of threatened species": 251,
-    },
-    {
-      name: "Corals",
-      "Number of threatened species": 232,
-    },
-    {
-      name: "Algae",
-      "Number of threatened species": 98,
-    },
-  ];
-  //console.log("revenue", revenue);
 
-  const dataFormatter = (number) =>
-    Intl.NumberFormat("us").format(number).toString();
+  const data = revenue.map((daily) => {
+    return {
+      fecha: formatDateToLocal(daily.fecha).toString().split(",")[0],
+      "Cantidad vendida": Number(daily.cantidadvendida),
+    };
+  });
+  //console.log("revenue", revenue);
+  //console.log("data", data);
+
   return (
-    <>
-      <div>
-        <p>TITU</p>
+    <div className="rounded-xl bg-gray-100 p-4 sm:w-1/2">
+      <div className="sm:grid-cols-1 mt-1 grid grid-cols-1 items-end gap-2 md:gap-4 rounded-md bg-white p-1">
         <BarChart
-          data={chartdata}
-          index="name"
-          categories={["Number of threatened species"]}
+          className="flex flex-col items-center gap-2"
+          data={data}
+          index="fecha"
+          categories={["Cantidad vendida"]}
           colors={["blue"]}
-          valueFormatter={dataFormatter}
           yAxisWidth={48}
-          onValueChange={(v) => console.log(v)}
         />
-        <p>b</p>
       </div>
-    </>
+    </div>
   );
 }
